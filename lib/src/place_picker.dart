@@ -73,6 +73,8 @@ class PlacePicker extends StatefulWidget {
     this.onCameraMoveStarted,
     this.onCameraMove,
     this.onCameraIdle,
+    this.showZoomButtons,
+    this.enableZoomGesture,
   }) : super(key: key);
 
   final String apiKey;
@@ -219,6 +221,10 @@ class PlacePicker extends StatefulWidget {
   /// Called when camera movement has ended, there are no pending
   /// animations and the user has stopped interacting with the map.
   final Function(PlaceProvider)? onCameraIdle;
+
+  ///controll zoom
+  final bool? showZoomButtons;
+  final bool? enableZoomGesture;
 
   @override
   _PlacePickerState createState() => _PlacePickerState();
@@ -504,6 +510,8 @@ class _PlacePickerState extends State<PlacePicker> {
       onCameraMoveStarted: widget.onCameraMoveStarted,
       onCameraMove: widget.onCameraMove,
       onCameraIdle: widget.onCameraIdle,
+      showZoomButtons: widget.showZoomButtons ?? false,
+      enableZoomGesture: widget.enableZoomGesture ?? true,
     );
   }
 
