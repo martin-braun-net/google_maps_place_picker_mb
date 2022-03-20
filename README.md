@@ -424,6 +424,22 @@ final ThemeData darkTheme = ThemeData.dark().copyWith(
 
 ![](screenshot2.png)
 
+### Minor Updates
+
+Parameters | Type | Description
+---------- | ---- | -----------
+showZoomButtons | bool | hide/show the zoom in/out buttons on the bottom right of the screen, this does not disable the pinch zoom gestures - false by default.
+enableZoomGesture | bool | Will disable zoom gestures when true - true by default.
+
+```dart
+PlacePicker(
+  apiKey: APIKeys.apiKey,
+  showZoomButtons: false,
+  enableZoomGesture: true, 
+  ...
+)
+```
+
 ## Feature Requests and Issues
 > Please file feature requests at the [original issue tracker][tracker] and bugs at the [MB edition issue tracker][tracker_fork]. I fetch any significant feature requests from the original repository, but bugs could be specific to this MB edition, so I want to take care by myself on them.
 > 
