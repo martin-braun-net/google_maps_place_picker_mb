@@ -74,8 +74,8 @@ class PlacePicker extends StatefulWidget {
     this.onCameraMove,
     this.onCameraIdle,
     this.onMapTypeChanged,
-    this.showZoomButtons,
-    this.enableZoomGestures,
+    this.zoomGesturesEnabled = true,
+    this.zoomControlsEnabled = false,
   }) : super(key: key);
 
   final String apiKey;
@@ -226,8 +226,8 @@ class PlacePicker extends StatefulWidget {
   final Function(MapType)? onMapTypeChanged;
 
   /// Allow user to make visible the zoom button & toggle on & off zoom gestures
-  final bool? showZoomButtons;
-  final bool? enableZoomGestures;
+  final bool zoomGesturesEnabled;
+  final bool zoomControlsEnabled;
 
 
   @override
@@ -510,8 +510,8 @@ class _PlacePickerState extends State<PlacePicker> {
       onCameraMoveStarted: widget.onCameraMoveStarted,
       onCameraMove: widget.onCameraMove,
       onCameraIdle: widget.onCameraIdle,
-      showZoomButtons: widget.showZoomButtons ?? false,
-      enableZoomGestures: widget.enableZoomGestures ?? true,
+      zoomGesturesEnabled: widget.zoomGesturesEnabled,
+      zoomControlsEnabled: widget.zoomControlsEnabled,
     );
   }
 
