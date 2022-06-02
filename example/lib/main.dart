@@ -36,7 +36,7 @@ class MyApp extends StatelessWidget {
 }
 
 class HomePage extends StatefulWidget {
-  const HomePage({Key key}) : super(key: key);
+  const HomePage({Key? key}) : super(key: key);
 
   static final kInitialPosition = LatLng(-33.8567844, 151.213108);
 
@@ -45,7 +45,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  PickResult selectedPlace;
+  PickResult? selectedPlace;
   bool showGoogleMapInContainer = false;
 
   @override
@@ -243,7 +243,7 @@ class _HomePageState extends State<HomePage> {
                           })),
               selectedPlace == null
                   ? Container()
-                  : Text(selectedPlace.formattedAddress ?? ""),
+                  : Text(selectedPlace?.formattedAddress ?? ""),
             ],
           ),
         ));
