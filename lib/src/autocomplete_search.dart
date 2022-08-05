@@ -30,6 +30,7 @@ class AutoCompleteSearch extends StatefulWidget {
       this.autocompleteTypes,
       this.strictbounds,
       this.region,
+        this.searchBarElevation,
       this.initialSearchString,
       this.searchForInitialValue,
       this.autocompleteOnTrailingWhitespace})
@@ -56,6 +57,7 @@ class AutoCompleteSearch extends StatefulWidget {
   final String? initialSearchString;
   final bool? searchForInitialValue;
   final bool? autocompleteOnTrailingWhitespace;
+  final double? searchBarElevation;
 
   @override
   AutoCompleteSearchState createState() => AutoCompleteSearchState();
@@ -105,7 +107,7 @@ class AutoCompleteSearchState extends State<AutoCompleteSearch> {
         padding: const EdgeInsets.only(right: 10),
         color: Theme.of(context).brightness == Brightness.dark ? Colors.black54 : Colors.white,
         borderRadius: BorderRadius.circular(20),
-        elevation: 8.0,
+        elevation: widget.searchBarElevation ?? 4.0,
         child: Row(
           children: <Widget>[
             SizedBox(width: 10),
@@ -124,7 +126,7 @@ class AutoCompleteSearchState extends State<AutoCompleteSearch> {
       controller: controller,
       focusNode: focus,
       decoration: InputDecoration(
-        hintText: widget.hintText,
+        hintText: widget.hintText ?? 'Search here',
         border: InputBorder.none,
         isDense: true,
         contentPadding: widget.contentPadding,
@@ -314,7 +316,7 @@ class AutoCompleteSearchState extends State<AutoCompleteSearch> {
   clearOverlay() {
     _clearOverlay();
   }
-  
+
   /// This allows a value of type T or T? to be treated as a value of type T?.
   ///
   /// We use this so that APIs that have become non-nullable can still be used

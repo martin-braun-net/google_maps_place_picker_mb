@@ -60,6 +60,7 @@ class PlacePicker extends StatefulWidget {
     this.autocompleteTypes,
     this.strictbounds,
     this.region,
+    this.searchBarElevation,
     this.pickArea,
     this.selectInitialPosition = false,
     this.resizeToAvoidBottomInset = true,
@@ -111,8 +112,8 @@ class PlacePicker extends StatefulWidget {
   final bool? strictbounds;
   final String? region;
 
-  /// If set the picker can only pick addresses in the given circle area. 
-  /// The section will be highlighted. 
+  /// If set the picker can only pick addresses in the given circle area.
+  /// The section will be highlighted.
   final CircleArea? pickArea;
 
   /// If true the [body] and the scaffold's floating widgets should size
@@ -189,16 +190,16 @@ class PlacePicker extends StatefulWidget {
 
   final bool hidePlaceDetailsWhenDraggingPin;
 
-  // Raised when clicking on the back arrow. 
-  // This will not listen for the system back button on Android devices. 
-  // If this is not set, but the back button is visible through automaticallyImplyLeading, 
+  // Raised when clicking on the back arrow.
+  // This will not listen for the system back button on Android devices.
+  // If this is not set, but the back button is visible through automaticallyImplyLeading,
   // the Navigator will try to pop instead.
   final VoidCallback? onTapBack;
 
   /// GoogleMap pass-through events:
 
   /// Callback method for when the map is ready to be used.
-  /// 
+  ///
   /// Used to receive a [GoogleMapController] for this [GoogleMap].
   final MapCreatedCallback? onMapCreated;
 
@@ -229,6 +230,9 @@ class PlacePicker extends StatefulWidget {
   /// Allow user to make visible the zoom button & toggle on & off zoom gestures
   final bool zoomGesturesEnabled;
   final bool zoomControlsEnabled;
+
+  /// Customize search bar elevation, default value is 4.0
+  final double? searchBarElevation;
 
   @override
   _PlacePickerState createState() => _PlacePickerState();
@@ -366,6 +370,7 @@ class _PlacePickerState extends State<PlacePicker> {
               searchBarController: searchBarController,
               sessionToken: provider!.sessionToken,
               hintText: widget.hintText,
+              searchBarElevation: widget.searchBarElevation,
               searchingText: widget.searchingText,
               debounceMilliseconds: widget.autoCompleteDebounceInMilliseconds,
               onPicked: (prediction) {
@@ -530,7 +535,7 @@ class _PlacePickerState extends State<PlacePicker> {
                 type: MaterialType.canvas,
                 color: Color.fromARGB(128, 0, 0, 0),
                 shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.zero, 
+                    borderRadius: BorderRadius.zero,
                 ),
                 child: ClipRect(),
               ),
