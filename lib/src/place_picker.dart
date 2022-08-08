@@ -60,7 +60,6 @@ class PlacePicker extends StatefulWidget {
     this.autocompleteTypes,
     this.strictbounds,
     this.region,
-    this.searchBarElevation,
     this.pickArea,
     this.selectInitialPosition = false,
     this.resizeToAvoidBottomInset = true,
@@ -231,9 +230,6 @@ class PlacePicker extends StatefulWidget {
   final bool zoomGesturesEnabled;
   final bool zoomControlsEnabled;
 
-  /// Customize search bar elevation, default value is 4.0
-  final double? searchBarElevation;
-
   @override
   _PlacePickerState createState() => _PlacePickerState();
 }
@@ -370,7 +366,6 @@ class _PlacePickerState extends State<PlacePicker> {
               searchBarController: searchBarController,
               sessionToken: provider!.sessionToken,
               hintText: widget.hintText,
-              searchBarElevation: widget.searchBarElevation,
               searchingText: widget.searchingText,
               debounceMilliseconds: widget.autoCompleteDebounceInMilliseconds,
               onPicked: (prediction) {

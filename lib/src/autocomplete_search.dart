@@ -30,7 +30,6 @@ class AutoCompleteSearch extends StatefulWidget {
       this.autocompleteTypes,
       this.strictbounds,
       this.region,
-        this.searchBarElevation,
       this.initialSearchString,
       this.searchForInitialValue,
       this.autocompleteOnTrailingWhitespace})
@@ -57,7 +56,6 @@ class AutoCompleteSearch extends StatefulWidget {
   final String? initialSearchString;
   final bool? searchForInitialValue;
   final bool? autocompleteOnTrailingWhitespace;
-  final double? searchBarElevation;
 
   @override
   AutoCompleteSearchState createState() => AutoCompleteSearchState();
@@ -107,7 +105,7 @@ class AutoCompleteSearchState extends State<AutoCompleteSearch> {
         padding: const EdgeInsets.only(right: 10),
         color: Theme.of(context).brightness == Brightness.dark ? Colors.black54 : Colors.white,
         borderRadius: BorderRadius.circular(20),
-        elevation: widget.searchBarElevation ?? 4.0,
+        elevation: 4.0,
         child: Row(
           children: <Widget>[
             SizedBox(width: 10),
