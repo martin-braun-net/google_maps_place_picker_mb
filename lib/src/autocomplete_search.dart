@@ -124,7 +124,7 @@ class AutoCompleteSearchState extends State<AutoCompleteSearch> {
       controller: controller,
       focusNode: focus,
       decoration: InputDecoration(
-        hintText: widget.hintText ?? 'Search here',
+        hintText: widget.hintText,
         border: InputBorder.none,
         isDense: true,
         contentPadding: widget.contentPadding,
