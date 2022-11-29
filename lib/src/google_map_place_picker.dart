@@ -387,10 +387,12 @@ class GoogleMapPlacePicker extends StatelessWidget {
                 this.hidePlaceDetailsWhenDraggingPin!) {
           return Container();
         } else {
+          if (this.useProvider) {
+            return _buildProviderList(context, data.item2);
+          }
+
           if (selectedPlaceWidgetBuilder == null) {
             return _defaultPlaceWidgetBuilder(context, data.item1, data.item2);
-          } else if (this.useProvider) {
-            return _buildProviderList(context, data.item2);
           } else {
             return Builder(
                 builder: (builderContext) => selectedPlaceWidgetBuilder!(
