@@ -269,6 +269,8 @@ onCameraMoveStarted\* | Function(PlaceProvider)? | Called when the camera starts
 onCameraMove\* | CameraPositionCallback? | Called repeatedly as the camera continues to move after an onCameraMoveStarted call. (GoogleMap widget)
 onCameraIdle\* | Function(PlaceProvider)? | Called when camera movement has ended, there are no pending animations and the user has stopped interacting with the map. (GoogleMap widget)
 onMapTypeChanged\* | Callback(MapType) | Invoked when user changes map type.
+buildProviders\*  | List<Widget> Function() | Called when useProvider is set to true to build the custom look for the list of service providers inside a FloatingCard widget
+useProvider\* | bool | Shows the provider's list if set to true or the address display is set to false
 
 > \* MB edition exclusive, as of now
 > 
