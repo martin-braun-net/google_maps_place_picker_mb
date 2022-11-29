@@ -7,7 +7,7 @@ import 'package:google_maps_place_picker_mb/src/google_map_place_picker.dart'; /
 import 'dart:io' show Platform;
 
 // Your api key storage.
-import 'keys.dart';
+import 'keys.dart.example';
 
 void main() => runApp(MyApp());
 
@@ -65,17 +65,21 @@ class _HomePageState extends State<HomePage> {
             children: <Widget>[
               Platform.isAndroid && !showPlacePickerInContainer
                   ? Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Switch(value: AndroidGoogleMapsFlutter.useAndroidViewSurface, onChanged: (value) {
-                        setState(() {
-                          showGoogleMapInContainer = false;
-                          AndroidGoogleMapsFlutter.useAndroidViewSurface = value;
-                        });
-                      }),
-                      Text("Use Hybrid Composition"),
-                    ],
-                  )
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Switch(
+                            value:
+                                AndroidGoogleMapsFlutter.useAndroidViewSurface,
+                            onChanged: (value) {
+                              setState(() {
+                                showGoogleMapInContainer = false;
+                                AndroidGoogleMapsFlutter.useAndroidViewSurface =
+                                    value;
+                              });
+                            }),
+                        Text("Use Hybrid Composition"),
+                      ],
+                    )
                   : Container(),
               !showPlacePickerInContainer
                   ? ElevatedButton(
@@ -86,7 +90,8 @@ class _HomePageState extends State<HomePage> {
                           MaterialPageRoute(
                             builder: (context) {
                               return PlacePicker(
-                                resizeToAvoidBottomInset: false, // only works on fullscreen, less flickery
+                                resizeToAvoidBottomInset:
+                                    false, // only works on fullscreen, less flickery
                                 apiKey: Platform.isAndroid
                                     ? APIKeys.androidApiKey
                                     : APIKeys.iosApiKey,
@@ -276,16 +281,16 @@ class _HomePageState extends State<HomePage> {
                       selectedPlace.geometry.location.lng.toString() +
                       ")"),
               // #region Google Map Example without provider
-              showPlacePickerInContainer 
-                ? Container()
-                : ElevatedButton(
-                  child: Text("Toggle Google Map w/o Provider"),
-                  onPressed: () {
-                    setState(() {
-                      showGoogleMapInContainer = !showGoogleMapInContainer;
-                    });
-                  },
-                ),
+              showPlacePickerInContainer
+                  ? Container()
+                  : ElevatedButton(
+                      child: Text("Toggle Google Map w/o Provider"),
+                      onPressed: () {
+                        setState(() {
+                          showGoogleMapInContainer = !showGoogleMapInContainer;
+                        });
+                      },
+                    ),
               !showGoogleMapInContainer
                   ? Container()
                   : Container(
@@ -297,23 +302,16 @@ class _HomePageState extends State<HomePage> {
                         myLocationButtonEnabled: false,
                         compassEnabled: false,
                         mapToolbarEnabled: false,
-                        initialCameraPosition: new CameraPosition(target: HomePage.kInitialPosition, zoom: 15),
+                        initialCameraPosition: new CameraPosition(
+                            target: HomePage.kInitialPosition, zoom: 15),
                         mapType: MapType.normal,
                         myLocationEnabled: true,
-                        onMapCreated: (GoogleMapController controller) {
-                        },
-                        onCameraIdle: () {
-                        },
-                        onCameraMoveStarted: () {
-                        },
-                        onCameraMove: (CameraPosition position) {
-                        },
-                      )
-                    ),
-              !showGoogleMapInContainer
-                  ? Container()
-                  : TextField(
-              ),
+                        onMapCreated: (GoogleMapController controller) {},
+                        onCameraIdle: () {},
+                        onCameraMoveStarted: () {},
+                        onCameraMove: (CameraPosition position) {},
+                      )),
+              !showGoogleMapInContainer ? Container() : TextField(),
               // #endregion
             ],
           ),
