@@ -493,6 +493,7 @@ class GoogleMapPlacePicker extends StatelessWidget {
       child: state == SearchingState.Searching
           ? _buildLoadingIndicator()
           : ListView(
+              itemExtent: 10,
               scrollDirection: Axis.horizontal,
               children: providerBuilder!(),
             ),
