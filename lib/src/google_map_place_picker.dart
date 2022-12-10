@@ -27,7 +27,7 @@ typedef PinBuilder = Widget Function(
   PinState state,
 );
 
-typedef ProvidersBuilder = List<Widget> Function();
+typedef ProvidersBuilder = Future<List<Widget>> Function(LatLng);
 
 class GoogleMapPlacePicker extends StatelessWidget {
   const GoogleMapPlacePicker({
@@ -189,9 +189,9 @@ class GoogleMapPlacePicker extends StatelessWidget {
                   ))),
         if (!this.fullMotion) _buildGoogleMap(context),
         if (!this.fullMotion) _buildPin(),
-        _buildFloatingCard(),
         _buildMapIcons(context),
-        if (!this.useProvider) _buildZoomButtons()
+        if (!this.useProvider) _buildZoomButtons(),
+        _buildFloatingCard(),
       ],
     );
   }
@@ -388,7 +388,21 @@ class GoogleMapPlacePicker extends StatelessWidget {
           return Container();
         } else {
           if (this.useProvider) {
-            return _buildProviderList(context, data.item2);
+            Widget widget = SizedBox.shrink();
+
+            func() async {
+              widget =
+                  await _buildProviderList(context, data.item2, data.item1);
+              // if (data.item2 == SearchingState.Idle) {
+              //   widget =
+              //       await _buildProviderList(context, data.item2, data.item1);
+              // } else {
+              //   _buildLoadingIndicator();
+              // }
+            }
+
+            func();
+            return widget;
           }
 
           if (selectedPlaceWidgetBuilder == null) {
@@ -481,21 +495,38 @@ class GoogleMapPlacePicker extends StatelessWidget {
     );
   }
 
-  Widget _buildProviderList(BuildContext context, SearchingState state) {
+  Future<Widget> _buildProviderList(
+      BuildContext context, SearchingState state, PickResult? pResult) async {
+    List<Widget> items = [];
+
+    items = await providerBuilder!(
+      LatLng(
+        pResult!.geometry!.location.lat,
+        pResult.geometry!.location.lng,
+      ),
+    );
+
     return FloatingCard(
       bottomPosition: MediaQuery.of(context).size.height * 0.1,
-      leftPosition: MediaQuery.of(context).size.width * 0.15,
-      rightPosition: MediaQuery.of(context).size.width * 0.15,
+      leftPosition: MediaQuery.of(context).size.width / 200,
+      rightPosition: MediaQuery.of(context).size.width / 200,
       width: MediaQuery.of(context).size.width * 0.7,
       borderRadius: BorderRadius.circular(12.0),
       elevation: 4.0,
-      color: Theme.of(context).cardColor,
+      color: Colors.transparent,
       child: state == SearchingState.Searching
           ? _buildLoadingIndicator()
-          : ListView(
-              itemExtent: 10,
-              scrollDirection: Axis.horizontal,
-              children: providerBuilder!(),
+          : SizedBox(
+              height: 100,
+              width: MediaQuery.of(context).size.width * 0.5,
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                itemCount: items.length,
+                itemBuilder: ((context, index) => SizedBox(
+                    height: 40,
+                    width: MediaQuery.of(context).size.width * 0.5,
+                    child: Card(child: items[index]))),
+              ),
             ),
     );
   }

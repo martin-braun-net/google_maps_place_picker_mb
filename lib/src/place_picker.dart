@@ -513,9 +513,8 @@ class _PlacePickerState extends State<PlacePicker> {
       zoomGesturesEnabled: widget.zoomGesturesEnabled,
       zoomControlsEnabled: widget.zoomControlsEnabled,
       useProvider: widget.useProvider,
-      providerBuilder: () {
-        return widget.buildProviders!();
-      },
+      providerBuilder:
+          widget.buildProviders == null ? null : widget.buildProviders!,
     );
   }
 
