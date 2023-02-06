@@ -71,7 +71,7 @@ class AutoCompleteSearchState extends State<AutoCompleteSearch> {
   void initState() {
     super.initState();
     if (widget.initialSearchString != null) {
-      _ambiguate(WidgetsBinding.instance)!.addPostFrameCallback((_) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
         controller.text = widget.initialSearchString!;
         if (widget.searchForInitialValue!) {
           _onSearchInputChange();
@@ -130,6 +130,11 @@ class AutoCompleteSearchState extends State<AutoCompleteSearch> {
       decoration: InputDecoration(
         hintText: widget.hintText,
         border: InputBorder.none,
+        errorBorder: InputBorder.none,
+        enabledBorder: InputBorder.none,
+        focusedBorder: InputBorder.none,
+        disabledBorder: InputBorder.none,
+        focusedErrorBorder: InputBorder.none,
         isDense: true,
         contentPadding: widget.contentPadding,
       ),
@@ -332,12 +337,4 @@ class AutoCompleteSearchState extends State<AutoCompleteSearch> {
   clearOverlay() {
     _clearOverlay();
   }
-
-  /// This allows a value of type T or T? to be treated as a value of type T?.
-  ///
-  /// We use this so that APIs that have become non-nullable can still be used
-  /// with `!` and `?` on the stable branch.
-  // TODO: Remove this, once Flutter 2 support is dropped
-  // See https://github.com/flutter/flutter/issues/64830
-  T? _ambiguate<T>(T? value) => value;
 }
