@@ -8,7 +8,6 @@ import 'package:google_maps_place_picker_mb/src/place_picker.dart';
 import 'package:google_maps_webservice/geocoding.dart';
 import 'package:google_maps_webservice/places.dart';
 import 'package:http/http.dart';
-import 'package:location/location.dart' as LocationPlatformInterface;
 import 'package:provider/provider.dart';
 import 'package:get/get.dart';
 
@@ -103,9 +102,6 @@ class PlaceProvider extends ChangeNotifier {
       } else {
         currentPosition = null;
       }
-    } catch (e) {
-      print(e);
-      currentPosition = null;
     }
   }
 

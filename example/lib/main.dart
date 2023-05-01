@@ -9,6 +9,10 @@ import 'dart:io' show Platform;
 // Your api key storage.
 import 'keys.dart.example';
 
+// Only to control hybrid composition and the renderer in Android
+import 'package:google_maps_flutter_android/google_maps_flutter_android.dart';
+import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platform_interface.dart';
+
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
@@ -39,18 +43,43 @@ class MyApp extends StatelessWidget {
 }
 
 class HomePage extends StatefulWidget {
-  const HomePage({Key key}) : super(key: key);
+  HomePage({Key? key}) : super(key: key);
 
   static final kInitialPosition = LatLng(-33.8567844, 151.213108);
+
+  final GoogleMapsFlutterPlatform mapsImplementation =
+      GoogleMapsFlutterPlatform.instance;
 
   @override
   _HomePageState createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
-  PickResult selectedPlace;
-  bool showPlacePickerInContainer = false;
-  bool showGoogleMapInContainer = false;
+  PickResult? selectedPlace;
+  bool _showPlacePickerInContainer = false;
+  bool _showGoogleMapInContainer = false;
+
+  bool _mapsInitialized = false;
+  String _mapsRenderer = "latest";
+
+  void initRenderer() {
+    if (_mapsInitialized) return;
+    if (widget.mapsImplementation is GoogleMapsFlutterAndroid) {
+      switch (_mapsRenderer) {
+        case "legacy":
+          (widget.mapsImplementation as GoogleMapsFlutterAndroid)
+              .initializeWithRenderer(AndroidMapRenderer.legacy);
+          break;
+        case "latest":
+          (widget.mapsImplementation as GoogleMapsFlutterAndroid)
+              .initializeWithRenderer(AndroidMapRenderer.latest);
+          break;
+      }
+    }
+    setState(() {
+      _mapsInitialized = true;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -85,6 +114,7 @@ class _HomePageState extends State<HomePage> {
                   ? ElevatedButton(
                       child: Text("Load Place Picker"),
                       onPressed: () {
+                        initRenderer();
                         Navigator.push(
                           context,
                           MaterialPageRoute(
@@ -129,8 +159,12 @@ class _HomePageState extends State<HomePage> {
                                 // pickArea: CircleArea(
                                 //   center: HomePage.kInitialPosition,
                                 //   radius: 300,
-                                //   fillColor: Colors.lightGreen.withGreen(255).withAlpha(32),
-                                //   strokeColor: Colors.lightGreen.withGreen(255).withAlpha(192),
+                                //   fillColor: Colors.lightGreen
+                                //       .withGreen(255)
+                                //       .withAlpha(32),
+                                //   strokeColor: Colors.lightGreen
+                                //       .withGreen(255)
+                                //       .withAlpha(192),
                                 //   strokeWidth: 2,
                                 // ),
                                 // selectedPlaceWidgetBuilder: (_, selectedPlace, state, isSearchBarFocused) {
@@ -232,12 +266,13 @@ class _HomePageState extends State<HomePage> {
                       },
                     )
                   : Container(),
-              !showPlacePickerInContainer
+              !_showPlacePickerInContainer
                   ? ElevatedButton(
                       child: Text("Load Place Picker in Container"),
                       onPressed: () {
+                        initRenderer();
                         setState(() {
-                          showPlacePickerInContainer = true;
+                          _showPlacePickerInContainer = true;
                         });
                       },
                     )
@@ -262,24 +297,22 @@ class _HomePageState extends State<HomePage> {
                           onPlacePicked: (PickResult result) {
                             setState(() {
                               selectedPlace = result;
-                              showPlacePickerInContainer = false;
+                              _showPlacePickerInContainer = false;
                             });
                           },
                           onTapBack: () {
                             setState(() {
-                              showPlacePickerInContainer = false;
+                              _showPlacePickerInContainer = false;
                             });
                           })),
-              selectedPlace == null
-                  ? Container()
-                  : Text(selectedPlace.formattedAddress),
-              selectedPlace == null
-                  ? Container()
-                  : Text("(lat: " +
-                      selectedPlace.geometry.location.lat.toString() +
-                      ", lng: " +
-                      selectedPlace.geometry.location.lng.toString() +
-                      ")"),
+              if (selectedPlace != null) ...[
+                Text(selectedPlace!.formattedAddress!),
+                Text("(lat: " +
+                    selectedPlace!.geometry!.location.lat.toString() +
+                    ", lng: " +
+                    selectedPlace!.geometry!.location.lng.toString() +
+                    ")"),
+              ],
               // #region Google Map Example without provider
               showPlacePickerInContainer
                   ? Container()

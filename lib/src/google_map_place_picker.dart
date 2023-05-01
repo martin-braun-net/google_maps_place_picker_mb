@@ -315,6 +315,7 @@ class _GoogleMapPlacePicker extends State<GoogleMapPlacePicker> {
 
         provider.pinState = PinState.Idle;
 
+
         if (widget.onCameraIdle != null) {
           widget.onCameraIdle!(provider);
         }
@@ -323,6 +324,7 @@ class _GoogleMapPlacePicker extends State<GoogleMapPlacePicker> {
       },
       onCameraMoveStarted: () {
         if (provider == null) return;
+
         if (widget.onCameraMoveStarted != null) {
           widget.onCameraMoveStarted!(provider);
         }
