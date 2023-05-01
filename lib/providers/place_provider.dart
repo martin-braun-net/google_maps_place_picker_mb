@@ -1,9 +1,8 @@
 import 'dart:async';
 
-import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:google_maps_place_picker_mb/src/google_map_place_picker%20copy.dart';
 import 'package:google_maps_place_picker_mb/src/models/pick_result.dart';
 import 'package:google_maps_place_picker_mb/src/place_picker.dart';
 import 'package:google_maps_webservice/geocoding.dart';
@@ -11,6 +10,7 @@ import 'package:google_maps_webservice/places.dart';
 import 'package:http/http.dart';
 import 'package:location/location.dart' as LocationPlatformInterface;
 import 'package:provider/provider.dart';
+import 'package:get/get.dart';
 
 import '../src/models/circle_area.dart';
 
@@ -56,11 +56,43 @@ class PlaceProvider extends ChangeNotifier {
   Future<void> updateCurrentLocation(bool forceAndroidLocationManager) async {
     isLocationServiceEnabled = await location.serviceEnabled();
     if (!isLocationServiceEnabled) {
-      isLocationServiceEnabled = await location.requestService();
+      // isLocationServiceEnabled = await location.requestService();
       if (!isLocationServiceEnabled) {
-        return;
+        // Get.dialog(
+        //   Padding(
+        //     padding: const EdgeInsets.all(10.0),
+        //     child: Column(
+        //       mainAxisAlignment: MainAxisAlignment.center,
+        //       crossAxisAlignment: CrossAxisAlignment.center,
+        //       children: [
+        //         const Icon(Icons.location_disabled),
+        //         const SizedBox(
+        //           height: 10,
+        //         ),
+        //         const Text(
+        //             "Your location service seems to be deisabled. Please enable your Location service and Click/Tap the Continue button."),
+        //         const SizedBox(
+        //           height: 20,
+        //         ),
+        //         ElevatedButton(
+        //           onPressed: () async {
+        //             await requestPermission().whenComplete(() => Get.back());
+        //           },
+        //           child: const Text("Continue"),
+        //         ),
+        //       ],
+        //     ),
+        //   ),
+        // );
+        // return;
       }
     }
+
+    await requestPermission();
+    notifyListeners();
+  }
+
+  Future<void> requestPermission() async {
     permissionGranted = await location.hasPermission();
     try {
       permissionGranted = await location.requestPermission();
@@ -75,7 +107,6 @@ class PlaceProvider extends ChangeNotifier {
       print(e);
       currentPosition = null;
     }
-    notifyListeners();
   }
 
   Position? _currentPosition;
@@ -101,10 +132,6 @@ class PlaceProvider extends ChangeNotifier {
   CameraPosition? _currentCameraPosition;
   CameraPosition? get cameraPosition => _currentCameraPosition;
   setCameraPosition(CameraPosition? newPosition) {
-    if (SearchRadius > 0)
-      searchRadiusArea =
-          CircleArea(center: newPosition!.target, radius: SearchRadius);
-
     _currentCameraPosition = newPosition;
   }
 
@@ -112,6 +139,10 @@ class PlaceProvider extends ChangeNotifier {
   PickResult? get selectedPlace => _selectedPlace;
   set selectedPlace(PickResult? result) {
     _selectedPlace = result;
+
+    if (SearchRadius > 0)
+      searchRadiusArea = CircleArea(
+          center: _currentCameraPosition!.target, radius: SearchRadius);
     notifyListeners();
   }
 
