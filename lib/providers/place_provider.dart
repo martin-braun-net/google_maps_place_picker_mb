@@ -9,7 +9,6 @@ import 'package:google_maps_webservice/geocoding.dart';
 import 'package:google_maps_webservice/places.dart';
 import 'package:http/http.dart';
 import 'package:provider/provider.dart';
-import 'package:get/get.dart';
 
 import '../src/models/circle_area.dart';
 
@@ -46,68 +45,6 @@ class PlaceProvider extends ChangeNotifier {
   bool isAutoCompleteSearching = false;
   CircleArea? searchRadiusArea;
 
-<<<<<<< HEAD
-  LocationPlatformInterface.Location location =
-      new LocationPlatformInterface.Location();
-  LocationPlatformInterface.PermissionStatus permissionGranted =
-      LocationPlatformInterface.PermissionStatus.denied;
-  bool isLocationServiceEnabled = false;
-
-  Future<void> updateCurrentLocation(bool forceAndroidLocationManager) async {
-    isLocationServiceEnabled = await location.serviceEnabled();
-    if (!isLocationServiceEnabled) {
-      // isLocationServiceEnabled = await location.requestService();
-      if (!isLocationServiceEnabled) {
-        // Get.dialog(
-        //   Padding(
-        //     padding: const EdgeInsets.all(10.0),
-        //     child: Column(
-        //       mainAxisAlignment: MainAxisAlignment.center,
-        //       crossAxisAlignment: CrossAxisAlignment.center,
-        //       children: [
-        //         const Icon(Icons.location_disabled),
-        //         const SizedBox(
-        //           height: 10,
-        //         ),
-        //         const Text(
-        //             "Your location service seems to be deisabled. Please enable your Location service and Click/Tap the Continue button."),
-        //         const SizedBox(
-        //           height: 20,
-        //         ),
-        //         ElevatedButton(
-        //           onPressed: () async {
-        //             await requestPermission().whenComplete(() => Get.back());
-        //           },
-        //           child: const Text("Continue"),
-        //         ),
-        //       ],
-        //     ),
-        //   ),
-        // );
-        // return;
-      }
-    }
-
-    await requestPermission();
-    notifyListeners();
-  }
-
-  Future<void> requestPermission() async {
-    permissionGranted = await location.hasPermission();
-    try {
-      permissionGranted = await location.requestPermission();
-      if (permissionGranted ==
-          LocationPlatformInterface.PermissionStatus.granted) {
-        currentPosition = await Geolocator.getCurrentPosition(
-            desiredAccuracy: desiredAccuracy ?? LocationAccuracy.best);
-      } else {
-        currentPosition = null;
-      }
-    } catch (e) {
-      print(e);
-      currentPosition = null;
-    }
-=======
   Future<void> updateCurrentLocation() async {
     bool serviceEnabled;
     LocationPermission permission;
@@ -143,7 +80,6 @@ class PlaceProvider extends ChangeNotifier {
     _currentPosition = await Geolocator.getCurrentPosition(
       desiredAccuracy: desiredAccuracy ?? LocationAccuracy.best,
     );
->>>>>>> d92469e56bd389d0eda20bc28b303b4abfbd27e0
   }
 
   Position? _currentPosition;
