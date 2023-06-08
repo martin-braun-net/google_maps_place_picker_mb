@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 
+import 'package:flutter/foundation.dart';
+import 'package:flutter/gestures.dart';
 import 'package:geolocator/geolocator.dart';
 
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -104,12 +106,6 @@ class GoogleMapPlacePicker extends StatelessWidget {
 
   _searchByCameraLocation(PlaceProvider provider) async {
     // We don't want to search location again if camera location is changed by zooming in/out.
-    if (widget.forceSearchOnZoomChanged == false &&
-        provider.prevCameraPosition != null &&
-        provider.prevCameraPosition!.target.latitude ==
-            provider.cameraPosition!.target.latitude &&
-        provider.prevCameraPosition!.target.longitude ==
-            provider.cameraPosition!.target.longitude) {
     if (forceSearchOnZoomChanged == false &&
         provider.prevCameraPosition != null &&
         provider.prevCameraPosition!.target.latitude ==
@@ -127,7 +123,7 @@ class GoogleMapPlacePicker extends StatelessWidget {
       Location(
           lat: provider.cameraPosition!.target.latitude,
           lng: provider.cameraPosition!.target.longitude),
-      language: widget.language,
+      language: language,
     );
 
     if (response.errorMessage?.isNotEmpty == true ||
@@ -140,7 +136,7 @@ class GoogleMapPlacePicker extends StatelessWidget {
       return;
     }
 
-    if (widget.usePlaceDetailSearch!) {
+    if (usePlaceDetailSearch!) {
       final PlacesDetailsResponse detailResponse =
           await provider.places.getDetailsByPlaceId(
         response.results[0].placeId,
@@ -151,8 +147,8 @@ class GoogleMapPlacePicker extends StatelessWidget {
           detailResponse.status == "REQUEST_DENIED") {
         print("Fetching details by placeId Error: " +
             detailResponse.errorMessage!);
-        if (widget.onSearchFailed != null) {
-          widget.onSearchFailed!(detailResponse.status);
+        if (onSearchFailed != null) {
+          onSearchFailed!(detailResponse.status);
         }
         provider.placeSearchingState = SearchingState.Idle;
         return;
@@ -172,23 +168,20 @@ class GoogleMapPlacePicker extends StatelessWidget {
   Widget build(BuildContext context) {
     return Stack(
       children: <Widget>[
-        if(this.fullMotion) 
-        SingleChildScrollView(
-            physics: const NeverScrollableScrollPhysics(),
-            child: SizedBox(
-              width: MediaQuery.of(context).size.width,
-              height: MediaQuery.of(context).size.height,
-              child: Stack(
-                alignment: AlignmentDirectional.center,
-                children: [
-                  _buildGoogleMap(context),
-                  _buildPin(),
-                ],
-              )
-            )
-        ),
-        if(!this.fullMotion) _buildGoogleMap(context),
-        if(!this.fullMotion) _buildPin(),
+        if (this.fullMotion)
+          SingleChildScrollView(
+              physics: const NeverScrollableScrollPhysics(),
+              child: SizedBox(
+                  width: MediaQuery.of(context).size.width,
+                  height: MediaQuery.of(context).size.height,
+                  child: Stack(
+                    alignment: AlignmentDirectional.center,
+                    children: [
+                      _buildGoogleMap(context),
+                      _buildPin(),
+                    ],
+                  ))),
+        if (!this.fullMotion) ...[_buildGoogleMap(context), _buildPin()],
         _buildFloatingCard(),
         _buildMapIcons(context),
         _buildZoomButtons()
