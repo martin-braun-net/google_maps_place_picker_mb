@@ -92,27 +92,6 @@ class _HomePageState extends State<HomePage> {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
-<<<<<<< HEAD
-              Platform.isAndroid && !showPlacePickerInContainer
-                  ? Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Switch(
-                            value:
-                                AndroidGoogleMapsFlutter.useAndroidViewSurface,
-                            onChanged: (value) {
-                              setState(() {
-                                showGoogleMapInContainer = false;
-                                AndroidGoogleMapsFlutter.useAndroidViewSurface =
-                                    value;
-                              });
-                            }),
-                        Text("Use Hybrid Composition"),
-                      ],
-                    )
-                  : Container(),
-              !showPlacePickerInContainer
-=======
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -172,7 +151,6 @@ class _HomePageState extends State<HomePage> {
                 ],
               ),
               !_showPlacePickerInContainer
->>>>>>> d92469e56bd389d0eda20bc28b303b4abfbd27e0
                   ? ElevatedButton(
                       child: Text("Load Place Picker"),
                       onPressed: () {
@@ -183,11 +161,7 @@ class _HomePageState extends State<HomePage> {
                             builder: (context) {
                               return PlacePicker(
                                 resizeToAvoidBottomInset:
-<<<<<<< HEAD
-                                    false, // only works on fullscreen, less flickery
-=======
                                     false, // only works in page mode, less flickery
->>>>>>> d92469e56bd389d0eda20bc28b303b4abfbd27e0
                                 apiKey: Platform.isAndroid
                                     ? APIKeys.androidApiKey
                                     : APIKeys.iosApiKey,
@@ -379,23 +353,11 @@ class _HomePageState extends State<HomePage> {
                     ")"),
               ],
               // #region Google Map Example without provider
-<<<<<<< HEAD
-              showPlacePickerInContainer
-=======
               _showPlacePickerInContainer
->>>>>>> d92469e56bd389d0eda20bc28b303b4abfbd27e0
                   ? Container()
                   : ElevatedButton(
                       child: Text("Toggle Google Map w/o Provider"),
                       onPressed: () {
-<<<<<<< HEAD
-                        setState(() {
-                          showGoogleMapInContainer = !showGoogleMapInContainer;
-                        });
-                      },
-                    ),
-              !showGoogleMapInContainer
-=======
                         initRenderer();
                         setState(() {
                           _showGoogleMapInContainer =
@@ -404,7 +366,6 @@ class _HomePageState extends State<HomePage> {
                       },
                     ),
               !_showGoogleMapInContainer
->>>>>>> d92469e56bd389d0eda20bc28b303b4abfbd27e0
                   ? Container()
                   : Container(
                       width: MediaQuery.of(context).size.width * 0.75,
@@ -424,11 +385,7 @@ class _HomePageState extends State<HomePage> {
                         onCameraMoveStarted: () {},
                         onCameraMove: (CameraPosition position) {},
                       )),
-<<<<<<< HEAD
-              !showGoogleMapInContainer ? Container() : TextField(),
-=======
               !_showGoogleMapInContainer ? Container() : TextField(),
->>>>>>> d92469e56bd389d0eda20bc28b303b4abfbd27e0
               // #endregion
             ],
           ),
