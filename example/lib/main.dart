@@ -7,7 +7,7 @@ import 'package:google_maps_place_picker_mb/src/google_map_place_picker.dart'; /
 import 'dart:io' show Platform;
 
 // Your api key storage.
-import 'keys.dart.example';
+import 'keys.dart';
 
 // Only to control hybrid composition and the renderer in Android
 import 'package:google_maps_flutter_android/google_maps_flutter_android.dart';
@@ -92,25 +92,65 @@ class _HomePageState extends State<HomePage> {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
-              Platform.isAndroid && !showPlacePickerInContainer
-                  ? Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Switch(
-                            value:
-                                AndroidGoogleMapsFlutter.useAndroidViewSurface,
-                            onChanged: (value) {
-                              setState(() {
-                                showGoogleMapInContainer = false;
-                                AndroidGoogleMapsFlutter.useAndroidViewSurface =
-                                    value;
-                              });
-                            }),
-                        Text("Use Hybrid Composition"),
-                      ],
-                    )
-                  : Container(),
-              !showPlacePickerInContainer
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  if (!_mapsInitialized &&
+                      widget.mapsImplementation
+                          is GoogleMapsFlutterAndroid) ...[
+                    Switch(
+                        value: (widget.mapsImplementation
+                                as GoogleMapsFlutterAndroid)
+                            .useAndroidViewSurface,
+                        onChanged: (value) {
+                          setState(() {
+                            (widget.mapsImplementation
+                                    as GoogleMapsFlutterAndroid)
+                                .useAndroidViewSurface = value;
+                          });
+                        }),
+                    Text("Hybrid Composition"),
+                  ]
+                ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  if (!_mapsInitialized &&
+                      widget.mapsImplementation
+                          is GoogleMapsFlutterAndroid) ...[
+                    Text("Renderer: "),
+                    Radio(
+                        groupValue: _mapsRenderer,
+                        value: "auto",
+                        onChanged: (value) {
+                          setState(() {
+                            _mapsRenderer = "auto";
+                          });
+                        }),
+                    Text("Auto"),
+                    Radio(
+                        groupValue: _mapsRenderer,
+                        value: "legacy",
+                        onChanged: (value) {
+                          setState(() {
+                            _mapsRenderer = "legacy";
+                          });
+                        }),
+                    Text("Legacy"),
+                    Radio(
+                        groupValue: _mapsRenderer,
+                        value: "latest",
+                        onChanged: (value) {
+                          setState(() {
+                            _mapsRenderer = "latest";
+                          });
+                        }),
+                    Text("Latest"),
+                  ]
+                ],
+              ),
+              !_showPlacePickerInContainer
                   ? ElevatedButton(
                       child: Text("Load Place Picker"),
                       onPressed: () {
@@ -121,7 +161,7 @@ class _HomePageState extends State<HomePage> {
                             builder: (context) {
                               return PlacePicker(
                                 resizeToAvoidBottomInset:
-                                    false, // only works on fullscreen, less flickery
+                                    false, // only works in page mode, less flickery
                                 apiKey: Platform.isAndroid
                                     ? APIKeys.androidApiKey
                                     : APIKeys.iosApiKey,
@@ -280,7 +320,6 @@ class _HomePageState extends State<HomePage> {
                       width: MediaQuery.of(context).size.width * 0.75,
                       height: MediaQuery.of(context).size.height * 0.35,
                       child: PlacePicker(
-                          forceAndroidLocationManager: true,
                           apiKey: Platform.isAndroid
                               ? APIKeys.androidApiKey
                               : APIKeys.iosApiKey,
@@ -314,17 +353,19 @@ class _HomePageState extends State<HomePage> {
                     ")"),
               ],
               // #region Google Map Example without provider
-              showPlacePickerInContainer
+              _showPlacePickerInContainer
                   ? Container()
                   : ElevatedButton(
                       child: Text("Toggle Google Map w/o Provider"),
                       onPressed: () {
+                        initRenderer();
                         setState(() {
-                          showGoogleMapInContainer = !showGoogleMapInContainer;
+                          _showGoogleMapInContainer =
+                              !_showGoogleMapInContainer;
                         });
                       },
                     ),
-              !showGoogleMapInContainer
+              !_showGoogleMapInContainer
                   ? Container()
                   : Container(
                       width: MediaQuery.of(context).size.width * 0.75,
@@ -344,7 +385,7 @@ class _HomePageState extends State<HomePage> {
                         onCameraMoveStarted: () {},
                         onCameraMove: (CameraPosition position) {},
                       )),
-              !showGoogleMapInContainer ? Container() : TextField(),
+              !_showGoogleMapInContainer ? Container() : TextField(),
               // #endregion
             ],
           ),

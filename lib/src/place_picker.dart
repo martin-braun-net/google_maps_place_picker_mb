@@ -65,7 +65,6 @@ class PlacePicker extends StatefulWidget {
     this.resizeToAvoidBottomInset = true,
     this.initialSearchString,
     this.searchForInitialValue = false,
-    this.forceAndroidLocationManager = false,
     this.forceSearchOnZoomChanged = false,
     this.automaticallyImplyAppBarLeading = true,
     this.autocompleteOnTrailingWhitespace = false,
@@ -77,8 +76,6 @@ class PlacePicker extends StatefulWidget {
     this.onMapTypeChanged,
     this.zoomGesturesEnabled = true,
     this.zoomControlsEnabled = false,
-    this.useProvider = false,
-    this.buildProviders,
   }) : super(key: key);
 
   final String apiKey;
@@ -142,15 +139,6 @@ class PlacePicker extends StatefulWidget {
   /// INPORTANT: If this is non-null, [onPlacePicked] will not be invoked, as there will be no default 'Select here' button.
   final SelectedPlaceWidgetBuilder? selectedPlaceWidgetBuilder;
 
-  ///Whether to add the provider's section or not
-  final bool useProvider;
-
-  ///optional - builds the provider section into the UI
-  ///
-  ///It removes the zoom and the location selction widgets if set
-  ///Becomes compulsory if the [useProvider] is set to true
-  final ProvidersBuilder? buildProviders;
-
   /// optional - builds customized pin widget which indicates current pointing position.
   ///
   /// It is provided by default if you leave it as a null.
@@ -179,11 +167,6 @@ class PlacePicker extends StatefulWidget {
 
   /// Whether to search for the initial value or not
   final bool searchForInitialValue;
-
-  /// On Android devices you can set [forceAndroidLocationManager]
-  /// to true to force the plugin to use the [LocationManager] to determine the
-  /// position instead of the [FusedLocationProviderClient]. On iOS this is ignored.
-  final bool forceAndroidLocationManager;
 
   /// Allow searching place when zoom has changed. By default searching is disabled when zoom has changed in order to prevent unwilling API usage.
   final bool forceSearchOnZoomChanged;
@@ -278,7 +261,7 @@ class _PlacePickerState extends State<PlacePicker> {
     provider.desiredAccuracy = widget.desiredLocationAccuracy;
     provider.setMapType(widget.initialMapType);
     if (widget.useCurrentLocation != null && widget.useCurrentLocation!) {
-      await provider.updateCurrentLocation(widget.forceAndroidLocationManager);
+      await provider.updateCurrentLocation();
     }
     return provider;
   }
@@ -498,8 +481,7 @@ class _PlacePickerState extends State<PlacePicker> {
           Timer(Duration(seconds: widget.myLocationButtonCooldown), () {
             provider!.isOnUpdateLocationCooldown = false;
           });
-          await provider!
-              .updateCurrentLocation(widget.forceAndroidLocationManager);
+          await provider!.updateCurrentLocation();
           await _moveToCurrentPosition();
         }
       },
@@ -512,9 +494,6 @@ class _PlacePickerState extends State<PlacePicker> {
       onCameraIdle: widget.onCameraIdle,
       zoomGesturesEnabled: widget.zoomGesturesEnabled,
       zoomControlsEnabled: widget.zoomControlsEnabled,
-      useProvider: widget.useProvider,
-      providerBuilder:
-          widget.buildProviders == null ? null : widget.buildProviders!,
     );
   }
 
