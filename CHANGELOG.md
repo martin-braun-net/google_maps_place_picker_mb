@@ -1,3 +1,8 @@
+## [3.0.2] - 10/May/2023
+
+- Fix getting current location 
+- Upgrade `google_maps_flutter` package to 2.2.6
+
 ## [3.0.1] - 06/Feb/2023
 
 - Search TextBox border themable for all states
