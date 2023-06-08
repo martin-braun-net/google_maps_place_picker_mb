@@ -1,8 +1,8 @@
 {
   "flutterSdkVersion": "stable",
   "flavors": {
-    "dev": "beta",
-    "prod": "stable",
-    "min": "2.10.5"
+    "lts": "3.0.0",
+    "main": "stable",
+    "edge": "beta"
   }
 }

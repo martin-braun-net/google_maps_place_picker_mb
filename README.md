@@ -153,7 +153,18 @@ If you want to run your app on the Simulator, please make sure to set a location
 
 ### Basic usage
 
-You can use PlacePicker by pushing to a new page using Navigator, OR put as a child of any widget.  
+First of all, it is recommend to enable Hybrid Composition on Android to avoid flickering issues when the map gets redrawn: 
+
+```dart
+void main() {
+  if(Platform.isAndroid) {
+    AndroidGoogleMapsFlutter.useAndroidViewSurface = true;
+  }
+  return runApp(MyApp());
+}
+```
+
+You can now use PlacePicker by pushing to a new page using Navigator, OR put as a child of any widget.  
 When the user picks a place on the map, it will return result to 'onPlacePicked' with PickResult type.
 Alternatively, you can build your own way with 'selectedPlaceWidgetBuilder' and fetch result from it (See the instruction below).
 
@@ -178,7 +189,7 @@ Navigator.push(
           },
           initialPosition: HomePage.kInitialPosition,
           useCurrentLocation: true,
-          resizeToAvoidBottomInset: false, // remove this line, if map offsets are wrong
+          resizeToAvoidBottomInset: false, // only works in page mode, less flickery, remove if wrong offsets
         ),
       ),
     );
@@ -245,7 +256,7 @@ selectedPlaceWidgetBuilder | WidgetBuilder | Specified on below section
 pinBuilder | WidgetBuilder | Specified on below section
 introPanelWidgetBuilder | WidgetBuilder | Specified on below section
 autocompleteOffset | num | The position, in the input term, of the last character that the service uses to match predictions
-autocompleteRadius | num | The distance (in meters) within which to return place results
+autocompleteRadius | num | The distance (in meters) within which to return place results. When set, autocomplete's results will be ordered by best results in the radius and by closest outside of the radius. Set to 1 to order all results by proximity.
 autocompleteLanguage | String | The [language code](https://developers.google.com/maps/faq#languagesupport), indicating in which language the results should be returned, if possible. 
 autocompleteComponents | List\<Components\> | A grouping of places to which you would like to restrict your results. Currently, you can use components to filter by up to 5 countries.
 autocompleteTypes | List\<String\> | The types of place results to return. See [Place Types](https://developers.google.com/places/web-service/autocomplete#place_types).
@@ -256,7 +267,6 @@ selectInitialPosition | bool | Whether to display selected place on initial map 
 resizeToAvoidBottomInset | bool | Resize map when keyboard is shown and can only be disabled when using a full screen map. Defaults to true.
 initialSearchString | String | Sets initial search string for auto complete search
 searchForInitialValue | bool | Wether to automatically search for initial value on start
-forceAndroidLocationManager | bool | On Android devices you can set this to true to force the geolocator plugin to use the 'LocationManager' to determine the position instead of the 'FusedLocationProviderClient'. On iOS this is ignored.
 myLocationButtonCooldown | int | Cooldown time in seconds for the 'myLocationButton'. Defaults to 10 seconds. 
 forceSearchOnZoomChanged | bool | Wether to allow place search even when the zoom has changed. Defaults to false.
 automaticallyImplyAppBarLeading | bool | By default, there is a back button on the top. Setting false will remove the back button.
@@ -434,7 +444,7 @@ final ThemeData darkTheme = ThemeData.dark().copyWith(
 );
 ```
 
-![](screenshot2.png)
+![](screenshot.png)
 
 ## Feature Requests and Issues
 > Please file feature requests at the [original issue tracker][tracker] and bugs at the [MB edition issue tracker][tracker_fork]. I fetch any significant feature requests from the original repository, but bugs could be specific to this MB edition, so I want to take care by myself on them.

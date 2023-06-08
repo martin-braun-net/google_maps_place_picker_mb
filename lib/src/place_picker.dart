@@ -65,7 +65,6 @@ class PlacePicker extends StatefulWidget {
     this.resizeToAvoidBottomInset = true,
     this.initialSearchString,
     this.searchForInitialValue = false,
-    this.forceAndroidLocationManager = false,
     this.forceSearchOnZoomChanged = false,
     this.automaticallyImplyAppBarLeading = true,
     this.autocompleteOnTrailingWhitespace = false,
@@ -180,11 +179,6 @@ class PlacePicker extends StatefulWidget {
   /// Whether to search for the initial value or not
   final bool searchForInitialValue;
 
-  /// On Android devices you can set [forceAndroidLocationManager]
-  /// to true to force the plugin to use the [LocationManager] to determine the
-  /// position instead of the [FusedLocationProviderClient]. On iOS this is ignored.
-  final bool forceAndroidLocationManager;
-
   /// Allow searching place when zoom has changed. By default searching is disabled when zoom has changed in order to prevent unwilling API usage.
   final bool forceSearchOnZoomChanged;
 
@@ -278,7 +272,7 @@ class _PlacePickerState extends State<PlacePicker> {
     provider.desiredAccuracy = widget.desiredLocationAccuracy;
     provider.setMapType(widget.initialMapType);
     if (widget.useCurrentLocation != null && widget.useCurrentLocation!) {
-      await provider.updateCurrentLocation(widget.forceAndroidLocationManager);
+      await provider.updateCurrentLocation();
     }
     return provider;
   }
@@ -498,8 +492,7 @@ class _PlacePickerState extends State<PlacePicker> {
           Timer(Duration(seconds: widget.myLocationButtonCooldown), () {
             provider!.isOnUpdateLocationCooldown = false;
           });
-          await provider!
-              .updateCurrentLocation(widget.forceAndroidLocationManager);
+          await provider!.updateCurrentLocation();
           await _moveToCurrentPosition();
         }
       },

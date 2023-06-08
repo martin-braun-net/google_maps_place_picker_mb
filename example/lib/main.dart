@@ -9,6 +9,10 @@ import 'dart:io' show Platform;
 // Your api key storage.
 import 'keys.dart.example';
 
+// Only to control hybrid composition and the renderer in Android
+import 'package:google_maps_flutter_android/google_maps_flutter_android.dart';
+import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platform_interface.dart';
+
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
@@ -39,18 +43,43 @@ class MyApp extends StatelessWidget {
 }
 
 class HomePage extends StatefulWidget {
-  const HomePage({Key key}) : super(key: key);
+  HomePage({Key? key}) : super(key: key);
 
   static final kInitialPosition = LatLng(-33.8567844, 151.213108);
+
+  final GoogleMapsFlutterPlatform mapsImplementation =
+      GoogleMapsFlutterPlatform.instance;
 
   @override
   _HomePageState createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
-  PickResult selectedPlace;
-  bool showPlacePickerInContainer = false;
-  bool showGoogleMapInContainer = false;
+  PickResult? selectedPlace;
+  bool _showPlacePickerInContainer = false;
+  bool _showGoogleMapInContainer = false;
+
+  bool _mapsInitialized = false;
+  String _mapsRenderer = "latest";
+
+  void initRenderer() {
+    if (_mapsInitialized) return;
+    if (widget.mapsImplementation is GoogleMapsFlutterAndroid) {
+      switch (_mapsRenderer) {
+        case "legacy":
+          (widget.mapsImplementation as GoogleMapsFlutterAndroid)
+              .initializeWithRenderer(AndroidMapRenderer.legacy);
+          break;
+        case "latest":
+          (widget.mapsImplementation as GoogleMapsFlutterAndroid)
+              .initializeWithRenderer(AndroidMapRenderer.latest);
+          break;
+      }
+    }
+    setState(() {
+      _mapsInitialized = true;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -63,6 +92,7 @@ class _HomePageState extends State<HomePage> {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
+<<<<<<< HEAD
               Platform.isAndroid && !showPlacePickerInContainer
                   ? Row(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -82,16 +112,82 @@ class _HomePageState extends State<HomePage> {
                     )
                   : Container(),
               !showPlacePickerInContainer
+=======
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  if (!_mapsInitialized &&
+                      widget.mapsImplementation
+                          is GoogleMapsFlutterAndroid) ...[
+                    Switch(
+                        value: (widget.mapsImplementation
+                                as GoogleMapsFlutterAndroid)
+                            .useAndroidViewSurface,
+                        onChanged: (value) {
+                          setState(() {
+                            (widget.mapsImplementation
+                                    as GoogleMapsFlutterAndroid)
+                                .useAndroidViewSurface = value;
+                          });
+                        }),
+                    Text("Hybrid Composition"),
+                  ]
+                ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  if (!_mapsInitialized &&
+                      widget.mapsImplementation
+                          is GoogleMapsFlutterAndroid) ...[
+                    Text("Renderer: "),
+                    Radio(
+                        groupValue: _mapsRenderer,
+                        value: "auto",
+                        onChanged: (value) {
+                          setState(() {
+                            _mapsRenderer = "auto";
+                          });
+                        }),
+                    Text("Auto"),
+                    Radio(
+                        groupValue: _mapsRenderer,
+                        value: "legacy",
+                        onChanged: (value) {
+                          setState(() {
+                            _mapsRenderer = "legacy";
+                          });
+                        }),
+                    Text("Legacy"),
+                    Radio(
+                        groupValue: _mapsRenderer,
+                        value: "latest",
+                        onChanged: (value) {
+                          setState(() {
+                            _mapsRenderer = "latest";
+                          });
+                        }),
+                    Text("Latest"),
+                  ]
+                ],
+              ),
+              !_showPlacePickerInContainer
+>>>>>>> d92469e56bd389d0eda20bc28b303b4abfbd27e0
                   ? ElevatedButton(
                       child: Text("Load Place Picker"),
                       onPressed: () {
+                        initRenderer();
                         Navigator.push(
                           context,
                           MaterialPageRoute(
                             builder: (context) {
                               return PlacePicker(
                                 resizeToAvoidBottomInset:
+<<<<<<< HEAD
                                     false, // only works on fullscreen, less flickery
+=======
+                                    false, // only works in page mode, less flickery
+>>>>>>> d92469e56bd389d0eda20bc28b303b4abfbd27e0
                                 apiKey: Platform.isAndroid
                                     ? APIKeys.androidApiKey
                                     : APIKeys.iosApiKey,
@@ -129,8 +225,12 @@ class _HomePageState extends State<HomePage> {
                                 // pickArea: CircleArea(
                                 //   center: HomePage.kInitialPosition,
                                 //   radius: 300,
-                                //   fillColor: Colors.lightGreen.withGreen(255).withAlpha(32),
-                                //   strokeColor: Colors.lightGreen.withGreen(255).withAlpha(192),
+                                //   fillColor: Colors.lightGreen
+                                //       .withGreen(255)
+                                //       .withAlpha(32),
+                                //   strokeColor: Colors.lightGreen
+                                //       .withGreen(255)
+                                //       .withAlpha(192),
                                 //   strokeWidth: 2,
                                 // ),
                                 // selectedPlaceWidgetBuilder: (_, selectedPlace, state, isSearchBarFocused) {
@@ -232,12 +332,13 @@ class _HomePageState extends State<HomePage> {
                       },
                     )
                   : Container(),
-              !showPlacePickerInContainer
+              !_showPlacePickerInContainer
                   ? ElevatedButton(
                       child: Text("Load Place Picker in Container"),
                       onPressed: () {
+                        initRenderer();
                         setState(() {
-                          showPlacePickerInContainer = true;
+                          _showPlacePickerInContainer = true;
                         });
                       },
                     )
@@ -245,7 +346,6 @@ class _HomePageState extends State<HomePage> {
                       width: MediaQuery.of(context).size.width * 0.75,
                       height: MediaQuery.of(context).size.height * 0.35,
                       child: PlacePicker(
-                          forceAndroidLocationManager: true,
                           apiKey: Platform.isAndroid
                               ? APIKeys.androidApiKey
                               : APIKeys.iosApiKey,
@@ -262,36 +362,49 @@ class _HomePageState extends State<HomePage> {
                           onPlacePicked: (PickResult result) {
                             setState(() {
                               selectedPlace = result;
-                              showPlacePickerInContainer = false;
+                              _showPlacePickerInContainer = false;
                             });
                           },
                           onTapBack: () {
                             setState(() {
-                              showPlacePickerInContainer = false;
+                              _showPlacePickerInContainer = false;
                             });
                           })),
-              selectedPlace == null
-                  ? Container()
-                  : Text(selectedPlace.formattedAddress),
-              selectedPlace == null
-                  ? Container()
-                  : Text("(lat: " +
-                      selectedPlace.geometry.location.lat.toString() +
-                      ", lng: " +
-                      selectedPlace.geometry.location.lng.toString() +
-                      ")"),
+              if (selectedPlace != null) ...[
+                Text(selectedPlace!.formattedAddress!),
+                Text("(lat: " +
+                    selectedPlace!.geometry!.location.lat.toString() +
+                    ", lng: " +
+                    selectedPlace!.geometry!.location.lng.toString() +
+                    ")"),
+              ],
               // #region Google Map Example without provider
+<<<<<<< HEAD
               showPlacePickerInContainer
+=======
+              _showPlacePickerInContainer
+>>>>>>> d92469e56bd389d0eda20bc28b303b4abfbd27e0
                   ? Container()
                   : ElevatedButton(
                       child: Text("Toggle Google Map w/o Provider"),
                       onPressed: () {
+<<<<<<< HEAD
                         setState(() {
                           showGoogleMapInContainer = !showGoogleMapInContainer;
                         });
                       },
                     ),
               !showGoogleMapInContainer
+=======
+                        initRenderer();
+                        setState(() {
+                          _showGoogleMapInContainer =
+                              !_showGoogleMapInContainer;
+                        });
+                      },
+                    ),
+              !_showGoogleMapInContainer
+>>>>>>> d92469e56bd389d0eda20bc28b303b4abfbd27e0
                   ? Container()
                   : Container(
                       width: MediaQuery.of(context).size.width * 0.75,
@@ -311,7 +424,11 @@ class _HomePageState extends State<HomePage> {
                         onCameraMoveStarted: () {},
                         onCameraMove: (CameraPosition position) {},
                       )),
+<<<<<<< HEAD
               !showGoogleMapInContainer ? Container() : TextField(),
+=======
+              !_showGoogleMapInContainer ? Container() : TextField(),
+>>>>>>> d92469e56bd389d0eda20bc28b303b4abfbd27e0
               // #endregion
             ],
           ),

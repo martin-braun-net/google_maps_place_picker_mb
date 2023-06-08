@@ -1,4 +1,20 @@
-## [2.0.0-mb.22] - 08/Aug/2022
+## [3.0.2] - 10/May/2023
+
+- Fix getting current location 
+- Upgrade `google_maps_flutter` package to 2.2.6
+
+## [3.0.1] - 06/Feb/2023
+
+- Search TextBox border themable for all states
+- Fix crash by replacing FlutterLocation with Geolocator (#51)
+
+## [3.0.0] - 22/Dec/2022
+
+- Upgrade packages
+- Added latest renderer support for Android
+- Flutter 2 support has been dropped in consequence
+
+## [2.0.0-mb.22] - 09/Aug/2022
 
 - Upgrade packages
 - Fix shadow clipping on AutoCompleteSearch
