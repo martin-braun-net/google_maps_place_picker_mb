@@ -1,0 +1,16 @@
+name: google_maps_place_picker_mb
+root: .
+
+pre_window: tmux set status-bg color31
+
+windows:
+  - package:
+      root: .
+      panes:
+        - vim README.md +'sil! so Session.vim'
+  - example:
+      root: example
+      panes:
+        - vim README.md +'sil! so Session.vim'
+
+startup_window: package
