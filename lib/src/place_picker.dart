@@ -311,7 +311,7 @@ class _PlacePickerState extends State<PlacePicker> {
               children.addAll([
                 Icon(
                   Icons.error_outline,
-                  color: Theme.of(context).errorColor,
+                  color: Theme.of(context).colorScheme.error,
                 ),
                 Padding(
                   padding: const EdgeInsets.only(top: 16),
@@ -481,8 +481,7 @@ class _PlacePickerState extends State<PlacePicker> {
           Timer(Duration(seconds: widget.myLocationButtonCooldown), () {
             provider!.isOnUpdateLocationCooldown = false;
           });
-          await provider!
-              .updateCurrentLocation();
+          await provider!.updateCurrentLocation();
           await _moveToCurrentPosition();
         }
       },
