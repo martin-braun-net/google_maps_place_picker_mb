@@ -1,3 +1,9 @@
+## [3.1.0] - 14/Jul/2023
+
+- Graceful location requests via `ignoreLocationPermissionErrors`
+- Better zoom controls that look more consistent with the overall experience
+- Upgrade packages
+
 ## [3.0.2] - 10/May/2023
 
 - Fix getting current location 
