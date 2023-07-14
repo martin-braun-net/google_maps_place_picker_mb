@@ -176,6 +176,7 @@ class _HomePageState extends State<HomePage> {
                                 usePlaceDetailSearch: true,
                                 zoomGesturesEnabled: true,
                                 zoomControlsEnabled: true,
+                                ignoreLocationPermissionErrors: true,
                                 onMapCreated: (GoogleMapController controller) {
                                   print("Map created");
                                 },
@@ -333,6 +334,7 @@ class _HomePageState extends State<HomePage> {
                           usePlaceDetailSearch: true,
                           zoomGesturesEnabled: true,
                           zoomControlsEnabled: true,
+                          ignoreLocationPermissionErrors: true,
                           onPlacePicked: (PickResult result) {
                             setState(() {
                               selectedPlace = result;
@@ -374,7 +376,6 @@ class _HomePageState extends State<HomePage> {
                         zoomGesturesEnabled: false,
                         zoomControlsEnabled: false,
                         myLocationButtonEnabled: false,
-                        compassEnabled: false,
                         mapToolbarEnabled: false,
                         initialCameraPosition: new CameraPosition(
                             target: HomePage.kInitialPosition, zoom: 15),

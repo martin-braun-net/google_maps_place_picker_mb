@@ -69,6 +69,7 @@ class PlacePicker extends StatefulWidget {
     this.automaticallyImplyAppBarLeading = true,
     this.autocompleteOnTrailingWhitespace = false,
     this.hidePlaceDetailsWhenDraggingPin = true,
+    this.ignoreLocationPermissionErrors = false,
     this.onTapBack,
     this.onCameraMoveStarted,
     this.onCameraMove,
@@ -181,7 +182,12 @@ class PlacePicker extends StatefulWidget {
   /// Defaults to false.
   final bool autocompleteOnTrailingWhitespace;
 
+  /// Whether to hide place details when dragging pin. Defaults to true.
   final bool hidePlaceDetailsWhenDraggingPin;
+
+  /// Whether to ignore location permission errors. Defaults to false.
+  /// If this is set to `true` the UI will be blocked.
+  final bool ignoreLocationPermissionErrors;
 
   // Raised when clicking on the back arrow.
   // This will not listen for the system back button on Android devices.
@@ -220,8 +226,10 @@ class PlacePicker extends StatefulWidget {
   /// Called when the map type has been changed.
   final Function(MapType)? onMapTypeChanged;
 
-  /// Allow user to make visible the zoom button & toggle on & off zoom gestures
+  /// Toggle on & off zoom gestures
   final bool zoomGesturesEnabled;
+
+  /// Allow user to make visible the zoom button
   final bool zoomControlsEnabled;
 
   @override
@@ -261,7 +269,8 @@ class _PlacePickerState extends State<PlacePicker> {
     provider.desiredAccuracy = widget.desiredLocationAccuracy;
     provider.setMapType(widget.initialMapType);
     if (widget.useCurrentLocation != null && widget.useCurrentLocation!) {
-      await provider.updateCurrentLocation();
+      await provider.updateCurrentLocation(
+          gracefully: widget.ignoreLocationPermissionErrors);
     }
     return provider;
   }
@@ -311,7 +320,7 @@ class _PlacePickerState extends State<PlacePicker> {
               children.addAll([
                 Icon(
                   Icons.error_outline,
-                  color: Theme.of(context).errorColor,
+                  color: Theme.of(context).colorScheme.error,
                 ),
                 Padding(
                   padding: const EdgeInsets.only(top: 16),
@@ -481,8 +490,8 @@ class _PlacePickerState extends State<PlacePicker> {
           Timer(Duration(seconds: widget.myLocationButtonCooldown), () {
             provider!.isOnUpdateLocationCooldown = false;
           });
-          await provider!
-              .updateCurrentLocation();
+          await provider!.updateCurrentLocation(
+              gracefully: widget.ignoreLocationPermissionErrors);
           await _moveToCurrentPosition();
         }
       },
