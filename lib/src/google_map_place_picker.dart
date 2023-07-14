@@ -403,13 +403,16 @@ class GoogleMapPlacePicker extends StatelessWidget {
           return Container();
         } else {
           return Positioned(
-            bottom: 50,
-            right: 10,
+            bottom: MediaQuery.of(context).size.height * 0.1 - 3.6,
+            right: 2,
             child: Card(
               elevation: 4.0,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12.0),
+              ),
               child: Container(
-                width: 40,
-                height: 100,
+                width: MediaQuery.of(context).size.width * 0.15 - 13,
+                height: 107,
                 child: Column(
                   children: <Widget>[
                     IconButton(
