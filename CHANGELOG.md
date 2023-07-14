@@ -1,3 +1,7 @@
+## [3.1.1] - 14/Jul/2023
+
+- Fix `package_info_plus` compatibility
+
 ## [3.1.0] - 14/Jul/2023
 
 - Graceful location requests via `ignoreLocationPermissionErrors`
