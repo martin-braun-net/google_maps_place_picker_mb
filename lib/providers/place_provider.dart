@@ -42,7 +42,7 @@ class PlaceProvider extends ChangeNotifier {
   LocationAccuracy? desiredAccuracy;
   bool isAutoCompleteSearching = false;
 
-  Future<void> updateCurrentLocation() async {
+  Future<void> updateCurrentLocation({bool gracefully = false}) async {
     bool serviceEnabled;
     LocationPermission permission;
 
@@ -52,6 +52,10 @@ class PlaceProvider extends ChangeNotifier {
       // Location services are not enabled don't continue
       // accessing the position and request users of the
       // App to enable the location services.
+      if (gracefully) {
+        // Or you can swallow the issue and respect the user's privacy
+        return;
+      }
       return Future.error('Location services are disabled.');
     }
 
@@ -64,12 +68,20 @@ class PlaceProvider extends ChangeNotifier {
         // Android's shouldShowRequestPermissionRationale
         // returned true. According to Android guidelines
         // your App should show an explanatory UI now.
+        if (gracefully) {
+          // Or you can swallow the issue and respect the user's privacy
+          return;
+        }
         return Future.error('Location permissions are denied');
       }
     }
 
     if (permission == LocationPermission.deniedForever) {
       // Permissions are denied forever, handle appropriately.
+      if (gracefully) {
+        // Or you can swallow the issue and respect the user's privacy
+        return;
+      }
       return Future.error(
           'Location permissions are permanently denied, we cannot request permissions.');
     }
