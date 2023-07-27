@@ -116,6 +116,12 @@ class GoogleMapPlacePicker extends StatelessWidget {
       return;
     }
 
+    if (provider.cameraPosition == null) {
+      // Camera position cannot be determined for some reason ...
+      provider.placeSearchingState = SearchingState.Idle;
+      return;
+    }
+
     provider.placeSearchingState = SearchingState.Searching;
 
     final GeocodingResponse response =
@@ -189,7 +195,7 @@ class GoogleMapPlacePicker extends StatelessWidget {
     );
   }
 
-  Widget _buildGoogleMapInner(PlaceProvider? provider, MapType mapType) {
+  Widget _buildGoogleMapInner(PlaceProvider provider, MapType mapType) {
     CameraPosition initialCameraPosition =
         CameraPosition(target: this.initialTarget, zoom: 15);
     return GoogleMap(
@@ -206,7 +212,6 @@ class GoogleMapPlacePicker extends StatelessWidget {
           ? Set<Circle>.from([pickArea])
           : Set<Circle>(),
       onMapCreated: (GoogleMapController controller) {
-        if (provider == null) return;
         provider.mapController = controller;
         provider.setCameraPosition(null);
         provider.pinState = PinState.Idle;
@@ -216,20 +221,15 @@ class GoogleMapPlacePicker extends StatelessWidget {
           provider.setCameraPosition(initialCameraPosition);
           _searchByCameraLocation(provider);
         }
-
-        if (onMapCreated != null) {
-          onMapCreated!(controller);
-        }
+        onMapCreated?.call(controller);
       },
       onCameraIdle: () {
-        if (provider == null) return;
         if (provider.isAutoCompleteSearching) {
           provider.isAutoCompleteSearching = false;
           provider.pinState = PinState.Idle;
           provider.placeSearchingState = SearchingState.Idle;
           return;
         }
-
         // Perform search only if the setting is to true.
         if (usePinPointingSearch!) {
           // Search current camera location only if camera has moved (dragged) before.
@@ -244,40 +244,25 @@ class GoogleMapPlacePicker extends StatelessWidget {
             });
           }
         }
-
         provider.pinState = PinState.Idle;
-
-        if (onCameraIdle != null) {
-          onCameraIdle!(provider);
-        }
+        onCameraIdle?.call(provider);
       },
       onCameraMoveStarted: () {
-        if (provider == null) return;
-        if (onCameraMoveStarted != null) {
-          onCameraMoveStarted!(provider);
-        }
-
+        onCameraMoveStarted?.call(provider);
         provider.setPrevCameraPosition(provider.cameraPosition);
-
         // Cancel any other timer.
         provider.debounceTimer?.cancel();
-
         // Update state, dismiss keyboard and clear text.
         provider.pinState = PinState.Dragging;
-
         // Begins the search state if the hide details is enabled
         if (this.hidePlaceDetailsWhenDraggingPin!) {
           provider.placeSearchingState = SearchingState.Searching;
         }
-
         onMoveStart!();
       },
       onCameraMove: (CameraPosition position) {
-        if (provider == null) return;
         provider.setCameraPosition(position);
-        if (onCameraMove != null) {
-          onCameraMove!(position);
-        }
+        onCameraMove?.call(position);
       },
       // gestureRecognizers make it possible to navigate the map when it's a
       // child in a scroll view e.g ListView, SingleChildScrollView...

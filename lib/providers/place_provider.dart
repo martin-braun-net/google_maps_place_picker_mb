@@ -23,7 +23,6 @@ class PlaceProvider extends ChangeNotifier {
       httpClient: httpClient,
       apiHeaders: apiHeaders as Map<String, String>?,
     );
-
     geocoding = GoogleMapsGeocoding(
       apiKey: apiKey,
       baseUrl: proxyBaseUrl,
@@ -162,7 +161,6 @@ class PlaceProvider extends ChangeNotifier {
   switchMapType() {
     _mapType = MapType.values[(_mapType.index + 1) % MapType.values.length];
     if (_mapType == MapType.none) _mapType = MapType.normal;
-
     notifyListeners();
   }
 }

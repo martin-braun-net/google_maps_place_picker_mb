@@ -289,7 +289,6 @@ class _PlacePickerState extends State<PlacePicker> {
               return const Center(child: CircularProgressIndicator());
             } else if (snapshot.hasData) {
               provider = snapshot.data;
-
               return MultiProvider(
                 providers: [
                   ChangeNotifierProvider<PlaceProvider>.value(value: provider!),
@@ -347,11 +346,15 @@ class _PlacePickerState extends State<PlacePicker> {
   Widget _buildSearchBar(BuildContext context) {
     return Row(
       children: <Widget>[
-        widget.automaticallyImplyAppBarLeading || widget.onTapBack != null
+        SizedBox(width: 15),
+        provider!.placeSearchingState == SearchingState.Idle &&
+                (widget.automaticallyImplyAppBarLeading ||
+                    widget.onTapBack != null)
             ? IconButton(
                 onPressed: () {
                   if (!showIntroModal ||
                       widget.introModalWidgetBuilder == null) {
+                    provider?.debounceTimer?.cancel();
                     if (widget.onTapBack != null) {
                       widget.onTapBack!();
                       return;
@@ -364,7 +367,7 @@ class _PlacePickerState extends State<PlacePicker> {
                 ),
                 color: Colors.black.withAlpha(128),
                 padding: EdgeInsets.zero)
-            : SizedBox(width: 15),
+            : Container(),
         Expanded(
           child: AutoCompleteSearch(
               appBarKey: appBarKey,
@@ -374,7 +377,9 @@ class _PlacePickerState extends State<PlacePicker> {
               searchingText: widget.searchingText,
               debounceMilliseconds: widget.autoCompleteDebounceInMilliseconds,
               onPicked: (prediction) {
-                _pickPrediction(prediction);
+                if (mounted) {
+                  _pickPrediction(prediction);
+                }
               },
               onSearchFailed: (status) {
                 if (widget.onAutoCompleteFailed != null) {
@@ -424,14 +429,14 @@ class _PlacePickerState extends State<PlacePicker> {
     await _moveTo(provider!.selectedPlace!.geometry!.location.lat,
         provider!.selectedPlace!.geometry!.location.lng);
 
+    if (provider == null) return;
     provider!.placeSearchingState = SearchingState.Idle;
   }
 
   _moveTo(double latitude, double longitude) async {
+    if (provider?.mapController == null) return;
     GoogleMapController? controller = provider!.mapController;
-    if (controller == null) return;
-
-    await controller.animateCamera(
+    await controller!.animateCamera(
       CameraUpdate.newCameraPosition(
         CameraPosition(
           target: LatLng(latitude, longitude),
@@ -442,10 +447,9 @@ class _PlacePickerState extends State<PlacePicker> {
   }
 
   _moveToCurrentPosition() async {
-    if (provider!.currentPosition != null) {
-      await _moveTo(provider!.currentPosition!.latitude,
-          provider!.currentPosition!.longitude);
-    }
+    if (provider?.currentPosition == null) return;
+    await _moveTo(provider!.currentPosition!.latitude,
+        provider!.currentPosition!.longitude);
   }
 
   Widget _buildMapWithLocation() {
@@ -478,6 +482,7 @@ class _PlacePickerState extends State<PlacePicker> {
       selectText: widget.selectText,
       outsideOfPickAreaText: widget.outsideOfPickAreaText,
       onToggleMapType: () {
+        if (provider == null) return;
         provider!.switchMapType();
         if (widget.onMapTypeChanged != null) {
           widget.onMapTypeChanged!(provider!.mapType);
@@ -485,6 +490,7 @@ class _PlacePickerState extends State<PlacePicker> {
       },
       onMyLocation: () async {
         // Prevent to click many times in short period.
+        if (provider == null) return;
         if (provider!.isOnUpdateLocationCooldown == false) {
           provider!.isOnUpdateLocationCooldown = true;
           Timer(Duration(seconds: widget.myLocationButtonCooldown), () {
@@ -496,6 +502,7 @@ class _PlacePickerState extends State<PlacePicker> {
         }
       },
       onMoveStart: () {
+        if (provider == null) return;
         searchBarController.reset();
       },
       onPlacePicked: widget.onPlacePicked,
@@ -527,9 +534,11 @@ class _PlacePickerState extends State<PlacePicker> {
                 ),
               ),
               widget.introModalWidgetBuilder!(context, () {
-                setState(() {
-                  showIntroModal = false;
-                });
+                if (mounted) {
+                  setState(() {
+                    showIntroModal = false;
+                  });
+                }
               })
             ])
           : Container();
