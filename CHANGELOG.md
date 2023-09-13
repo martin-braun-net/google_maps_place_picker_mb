@@ -1,3 +1,5 @@
+- Fix potential crash on hesitant camera movements #67
+
 ## [3.1.1] - 14/Jul/2023
 
 - Fix `package_info_plus` compatibility
