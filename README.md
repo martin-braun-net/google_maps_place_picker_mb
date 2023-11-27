@@ -182,7 +182,7 @@ Navigator.push(
         builder: (context) => PlacePicker(
           apiKey: Platform.isAndroid
               ? "YOUR ANDROID API KEY"
-              : "YOUR IOS API KEY".
+              : "YOUR IOS API KEY",
           onPlacePicked: (result) { 
             print(result.address); 
             Navigator.of(context).pop();
