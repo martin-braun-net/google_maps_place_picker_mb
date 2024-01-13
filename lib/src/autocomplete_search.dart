@@ -41,34 +41,6 @@ class AutoCompleteSearch extends StatefulWidget {
     this.builder,
   }) : super(key: key);
 
-  // AutoCompleteSearch.builder(
-  //     {Key? key,
-  //     required this.sessionToken,
-  //     required this.onPicked,
-  //     required this.appBarKey,
-  //     required this.searchBarController,
-  //     required this.builder,
-  //     this.hintText = "Search here",
-  //     this.searchingText = "Searching...",
-  //     this.hidden = false,
-  //     this.height = 40,
-  //     this.contentPadding = EdgeInsets.zero,
-  //     this.debounceMilliseconds,
-  //     this.onSearchFailed,
-  //     this.autocompleteOffset,
-  //     this.autocompleteRadius,
-  //     this.autocompleteLanguage,
-  //     this.autocompleteComponents,
-  //     this.autocompleteTypes,
-  //     this.strictbounds,
-  //     this.region,
-  //     this.initialSearchString,
-  //     this.searchForInitialValue,
-  //     this.autocompleteOnTrailingWhitespace})
-  //     : super(key: key) {
-  //   assert(builder != null);
-  // }
-
   final String? sessionToken;
   final String? hintText;
   final String? searchingText;
