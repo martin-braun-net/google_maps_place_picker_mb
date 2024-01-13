@@ -150,6 +150,47 @@ class _HomePageState extends State<HomePage> {
                   ]
                 ],
               ),
+              ElevatedButton(
+                  child: const Text("Load Place Picker"),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) {
+                        return PlacePicker.searchBuilder(
+                          searchBuilder: ((c, d) => Row(
+                                children: [
+                                  const SizedBox(
+                                    width: 10,
+                                  ),
+                                  const Icon(Icons.pin_drop_outlined),
+                                  const SizedBox(width: 10),
+                                  SearchbarTextField(
+                                    controller: d,
+                                    contentPadding:
+                                        const EdgeInsets.only(bottom: 0),
+                                    focus: FocusNode(),
+                                    hintText: "Search here",
+                                  ),
+                                  const Icon(Icons.mic),
+                                  const SizedBox(width: 10)
+                                ],
+                              )),
+                          apiKey: Platform.isAndroid
+                              ? APIKeys.androidApiKey
+                              : APIKeys.iosApiKey,
+                          onPlacePicked: (result) {
+                            print(result.adrAddress);
+                            Navigator.of(context).pop();
+                          },
+                          initialPosition: HomePage.kInitialPosition,
+                          useCurrentLocation: true,
+                          resizeToAvoidBottomInset:
+                              false, // only works in page mode, less flickery, remove if wrong offsets
+                        );
+                      }),
+                    );
+                  }),
+
               !_showPlacePickerInContainer
                   ? ElevatedButton(
                       child: Text("Load Place Picker"),

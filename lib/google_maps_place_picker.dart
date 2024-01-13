@@ -5,3 +5,4 @@ export 'src/components/floating_card.dart';
 export 'src/components/rounded_frame.dart';
 export 'src/models/circle_area.dart';
 export 'src/place_picker.dart';
+export 'src/components/searchbar_text_field.dart';

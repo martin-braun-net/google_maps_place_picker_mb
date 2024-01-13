@@ -75,6 +75,61 @@ class PlacePicker extends StatefulWidget {
     this.onCameraMove,
     this.onCameraIdle,
     this.onMapTypeChanged,
+    this.searchBuilder,
+    this.zoomGesturesEnabled = true,
+    this.zoomControlsEnabled = false,
+  }) : super(key: key);
+
+  PlacePicker.searchBuilder({
+    Key? key,
+    required this.apiKey,
+    required this.initialPosition,
+    required this.searchBuilder,
+    this.onPlacePicked,
+    this.useCurrentLocation,
+    this.desiredLocationAccuracy = LocationAccuracy.high,
+    this.onMapCreated,
+    this.hintText,
+    this.searchingText,
+    this.selectText,
+    this.outsideOfPickAreaText,
+    this.onAutoCompleteFailed,
+    this.onGeocodingSearchFailed,
+    this.proxyBaseUrl,
+    this.httpClient,
+    this.selectedPlaceWidgetBuilder,
+    this.pinBuilder,
+    this.introModalWidgetBuilder,
+    this.autoCompleteDebounceInMilliseconds = 500,
+    this.cameraMoveDebounceInMilliseconds = 750,
+    this.initialMapType = MapType.normal,
+    this.enableMapTypeButton = true,
+    this.enableMyLocationButton = true,
+    this.myLocationButtonCooldown = 10,
+    this.usePinPointingSearch = true,
+    this.usePlaceDetailSearch = false,
+    this.autocompleteOffset,
+    this.autocompleteRadius,
+    this.autocompleteLanguage,
+    this.autocompleteComponents,
+    this.autocompleteTypes,
+    this.strictbounds,
+    this.region,
+    this.pickArea,
+    this.selectInitialPosition = false,
+    this.resizeToAvoidBottomInset = true,
+    this.initialSearchString,
+    this.searchForInitialValue = false,
+    this.forceSearchOnZoomChanged = false,
+    this.automaticallyImplyAppBarLeading = true,
+    this.autocompleteOnTrailingWhitespace = false,
+    this.hidePlaceDetailsWhenDraggingPin = true,
+    this.ignoreLocationPermissionErrors = false,
+    this.onTapBack,
+    this.onCameraMoveStarted,
+    this.onCameraMove,
+    this.onCameraIdle,
+    this.onMapTypeChanged,
     this.zoomGesturesEnabled = true,
     this.zoomControlsEnabled = false,
   }) : super(key: key);
@@ -232,6 +287,10 @@ class PlacePicker extends StatefulWidget {
   /// Allow user to make visible the zoom button
   final bool zoomControlsEnabled;
 
+  ///Allows users to build custom searchBox contents
+  ///The children must contain the custom widget [SearchbarTextField] and a valid [TextEditingController]
+  final AutoCompleteSearchBuilder? searchBuilder;
+
   @override
   _PlacePickerState createState() => _PlacePickerState();
 }
@@ -277,10 +336,10 @@ class _PlacePickerState extends State<PlacePicker> {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-        onWillPop: () {
+    return PopScope(
+        canPop: true,
+        onPopInvoked: (t) {
           searchBarController.clearOverlay();
-          return Future.value(true);
         },
         child: FutureBuilder<PlaceProvider>(
           future: _futureProvider,
@@ -370,6 +429,7 @@ class _PlacePickerState extends State<PlacePicker> {
             : Container(),
         Expanded(
           child: AutoCompleteSearch(
+              builder: widget.searchBuilder,
               appBarKey: appBarKey,
               searchBarController: searchBarController,
               sessionToken: provider!.sessionToken,

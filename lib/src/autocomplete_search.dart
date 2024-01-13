@@ -1,3 +1,5 @@
+// ignore_for_file: must_be_immutable
+
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -9,31 +11,63 @@ import 'package:google_maps_place_picker_mb/src/controllers/autocomplete_search_
 import 'package:flutter_google_maps_webservices/places.dart';
 import 'package:provider/provider.dart';
 
+typedef Row AutoCompleteSearchBuilder(
+    BuildContext context, TextEditingController controller);
+
 class AutoCompleteSearch extends StatefulWidget {
-  const AutoCompleteSearch(
-      {Key? key,
-      required this.sessionToken,
-      required this.onPicked,
-      required this.appBarKey,
-      this.hintText = "Search here",
-      this.searchingText = "Searching...",
-      this.hidden = false,
-      this.height = 40,
-      this.contentPadding = EdgeInsets.zero,
-      this.debounceMilliseconds,
-      this.onSearchFailed,
-      required this.searchBarController,
-      this.autocompleteOffset,
-      this.autocompleteRadius,
-      this.autocompleteLanguage,
-      this.autocompleteComponents,
-      this.autocompleteTypes,
-      this.strictbounds,
-      this.region,
-      this.initialSearchString,
-      this.searchForInitialValue,
-      this.autocompleteOnTrailingWhitespace})
-      : super(key: key);
+  AutoCompleteSearch({
+    Key? key,
+    required this.sessionToken,
+    required this.onPicked,
+    required this.appBarKey,
+    this.hintText = "Search here",
+    this.searchingText = "Searching...",
+    this.hidden = false,
+    this.height = 40,
+    this.contentPadding = EdgeInsets.zero,
+    this.debounceMilliseconds,
+    this.onSearchFailed,
+    required this.searchBarController,
+    this.autocompleteOffset,
+    this.autocompleteRadius,
+    this.autocompleteLanguage,
+    this.autocompleteComponents,
+    this.autocompleteTypes,
+    this.strictbounds,
+    this.region,
+    this.initialSearchString,
+    this.searchForInitialValue,
+    this.autocompleteOnTrailingWhitespace,
+    this.builder,
+  }) : super(key: key);
+
+  // AutoCompleteSearch.builder(
+  //     {Key? key,
+  //     required this.sessionToken,
+  //     required this.onPicked,
+  //     required this.appBarKey,
+  //     required this.searchBarController,
+  //     required this.builder,
+  //     this.hintText = "Search here",
+  //     this.searchingText = "Searching...",
+  //     this.hidden = false,
+  //     this.height = 40,
+  //     this.contentPadding = EdgeInsets.zero,
+  //     this.debounceMilliseconds,
+  //     this.onSearchFailed,
+  //     this.autocompleteOffset,
+  //     this.autocompleteRadius,
+  //     this.autocompleteLanguage,
+  //     this.autocompleteComponents,
+  //     this.autocompleteTypes,
+  //     this.strictbounds,
+  //     this.region,
+  //     this.initialSearchString,
+  //     this.searchForInitialValue,
+  //     this.autocompleteOnTrailingWhitespace})
+  //     : super(key: key) {
+  //   assert(builder != null);
+  // }
 
   final String? sessionToken;
   final String? hintText;
@@ -56,6 +90,7 @@ class AutoCompleteSearch extends StatefulWidget {
   final String? initialSearchString;
   final bool? searchForInitialValue;
   final bool? autocompleteOnTrailingWhitespace;
+  late AutoCompleteSearchBuilder? builder;
 
   @override
   AutoCompleteSearchState createState() => AutoCompleteSearchState();
@@ -109,35 +144,47 @@ class AutoCompleteSearchState extends State<AutoCompleteSearch> {
                   : Colors.white,
               borderRadius: BorderRadius.circular(20),
               elevation: 4.0,
-              child: Row(
-                children: <Widget>[
-                  SizedBox(width: 10),
-                  Icon(Icons.search),
-                  SizedBox(width: 10),
-                  Expanded(child: _buildSearchTextField()),
-                  _buildTextClearIcon(),
-                ],
-              ),
+              child: widget.builder == null
+                  ? _buildSearchBoxContent()
+                  : _buildSearchBoxContentWithBuilder(),
             ),
           )
         : Container();
   }
 
+  Widget _buildSearchBoxContentWithBuilder() {
+    var child = widget.builder!(context, controller);
+
+    assert(child.children.any((element) => element is SearchbarTextField));
+
+    child.children.forEach((t) {
+      if (t is SearchbarTextField) {
+        assert(t.controller != null,
+            "The controller parameter must be passed if the searchBuilder is being used.");
+      }
+    });
+
+    return child;
+  }
+
+  Widget _buildSearchBoxContent({Widget? prefix, Widget? suffix}) {
+    return Row(
+      children: <Widget>[
+        SizedBox(width: 10),
+        prefix != null ? prefix : Icon(Icons.search),
+        SizedBox(width: 10),
+        _buildSearchTextField(),
+        suffix != null ? suffix : _buildTextClearIcon(),
+      ],
+    );
+  }
+
   Widget _buildSearchTextField() {
-    return TextField(
+    return SearchbarTextField(
       controller: controller,
-      focusNode: focus,
-      decoration: InputDecoration(
-        hintText: widget.hintText,
-        border: InputBorder.none,
-        errorBorder: InputBorder.none,
-        enabledBorder: InputBorder.none,
-        focusedBorder: InputBorder.none,
-        disabledBorder: InputBorder.none,
-        focusedErrorBorder: InputBorder.none,
-        isDense: true,
-        contentPadding: widget.contentPadding,
-      ),
+      contentPadding: widget.contentPadding,
+      focus: focus,
+      hintText: widget.hintText,
     );
   }
 
@@ -157,6 +204,8 @@ class AutoCompleteSearchState extends State<AutoCompleteSearch> {
                 ),
                 onTap: () {
                   clearText();
+
+                  //add a callbackaction here after clearing the text
                 },
               ),
             );
